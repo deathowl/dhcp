@@ -2,6 +2,7 @@
 
 package client4
 import 	(
+	"net"
 	"syscall"
 
 	"github.com/insomniacslk/dhcp/dhcpv4"
@@ -18,8 +19,9 @@ func makeListeningSocketWithCustomPort(ifname string, port int) (int, error) {
 	if err != nil {
 		return fd, err
 	}
-
-    llAddr := unix.SockaddrInet4{Addr: [4]byte{127, 0, 0, 1}}
+	var addr [4]byte
+	copy(addr[:], net.IPv4zero.To4())
+    llAddr := unix.SockaddrInet4{Addr: addr, Port: port}
 	err = dhcpv4.BindToInterface(fd, ifname)
 	if err != nil {
 		return fd, err
